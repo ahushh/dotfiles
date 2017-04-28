@@ -1,0 +1,53 @@
+! Urxvt settngs
+URxvt*scrollBar: False
+URxvt*saveLines: 900000
+URxvt*font: xft:DejaVu Sans Mono:size=10
+URxvt*geometry: 98x30
+
+URxvt*background: Black
+URxvt*foreground: #BBBBBB
+
+URxvt*color0: #000000
+URxvt*color1: #aa0000
+URxvt*color2: #00aa00
+URxvt*color3: #aa5500
+URxvt*color4: #0000aa
+URxvt*color5: #aa00aa
+URxvt*color6: #00aaaa
+URxvt*color7: #aaaaaa
+URxvt*color8: #555555
+URxvt*color9: #ff5555
+URxvt*color10: #55ff55
+URxvt*color11: #ffff55
+URxvt*color12: #5555ff
+URxvt*color13: #ff55ff
+URxvt*color14: #55ffff
+URxvt*color15: #ffffff
+
+
+! ----- yeahconsole settings ------
+! Используемый терминал
+yeahconsole*term: urxvt
+! Перзагружать терминал
+yeahconsole*restart: 1
+! Вызов консоли
+yeahconsole*toggleKey: Alt+F1
+! Фуллскрин
+yeahconsole*keyFull: Alt+F12
+! Задержка появления
+yeahconsole*aniDelay: 0
+! Цвет текста
+yeahconsole*foreground: grey
+! Цвет фона
+yeahconsole*background: black
+! Левая граница
+yeahconsole*xOffset: 1010
+! Ширина
+yeahconsole*screenWidth:900
+! Высота
+yeahconsole*consoleHeight:15
+! misc term features
+yeahconsole*loginShell: true
+yeahconsole*savelines: 10000
+yeahconsole*toolBar: false
+

@@ -1,0 +1,14 @@
+.vim/.VimballRecord
+.vim/.netrwhist
+.vim/undo/*
+.emacs.d/auto-save-list/*
+.emacs.d/backups/*
+.emacs.d/ido-last
+.emacs.d/jabber-history/*
+.emacs.d/places
+.emacs.d/ac-comphist.dat
+.emacs.d/my-jabber-settings.el
+.emacs.d/elpa/*
+.xmonad/*
+!.xmonad/xmonad.hs
+
