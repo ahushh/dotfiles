@@ -17,18 +17,29 @@
 ;undo-tree-20140509.522
 ;w3m-20140420.2007
 ;web-mode-20140528.1125
-;whole-line-or-region-20110901.130
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d") t)
-;; extend load path
-;(let ((default-directory user-emacs-directory))
-;  (normal-top-level-add-to-load-path '(".")))
-;; packages
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-			 ;("gnu" . "http://elpa.gnu.org/packages/")
-			 ("melpa" . "http://melpa.milkbox.net/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")))
+;; Packages
+(require 'package)
+(add-to-list
+  'package-archives
+  '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
+(package-refresh-contents)
+
+(package-install 'whole-line-or-region)
+(package-install 'auto-complete)
+(package-install 'undo-tree)
+(package-install 'multiple-cursors)
+(package-install 'saveplace)
+(package-install 'dockerfile-mode)
+(package-install 'docker-compose-mode)
+; Docker
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(require 'docker-compose-mode)
+; Intero
+(package-install 'intero)
+(add-hook 'haskell-mode-hook 'intero-mode)
 ;;-------------------------------------------------------------------------------
 ;; appearance
 ;;-------------------------------------------------------------------------------
@@ -142,62 +153,37 @@
 ;; (:network-server . "jabber.ru")
 ;; (:port . 443)
 ;; (:connection-type . ssl))
-(require 'my-jabber-settings)
-(setq jabber-vcard-avatars-retrieve nil)
-(setq jabber-auto-reconnect t)
-(setq jabber-history-enabled t)
-(setq jabber-history-size-limit 1024)
-(setq jabber-history-dir (concat user-emacs-directory "jabber-history"))
-(add-hook 'jabber-chat-mode-hook 'flyspell-mode)
+;(require 'my-jabber-settings)
+;(setq jabber-vcard-avatars-retrieve nil)
+;(setq jabber-auto-reconnect t)
+;(setq jabber-history-enabled t)
+;(setq jabber-history-size-limit 1024)
+;(setq jabber-history-dir (concat user-emacs-directory "jabber-history"))
+;(add-hook 'jabber-chat-mode-hook 'flyspell-mode)
 					; notification
-(defvar libnotify-program "/usr/bin/notify-send")
-(defun notify-send (title message)
-  (start-process "notify" " notify"
-		 libnotify-program "--expire-time=4000" title message))
-(defun libnotify-jabber-notify (from buf text proposed-alert)
-  "(jabber.el hook) Notify of new Jabber chat messages via libnotify"
-  (when (or jabber-message-alert-same-buffer
-	    (not (memq (selected-window) (get-buffer-window-list buf))))
-    (if (jabber-muc-sender-p from)
-	(notify-send (format "(PM) %s"
-			     (jabber-jid-displayname (jabber-jid-user from)))
-		     (format "%s: %s" (jabber-jid-resource from) text)))
-    (notify-send (format "%s" (jabber-jid-displayname from))
-		 text)))
-(add-hook 'jabber-alert-message-hooks 'libnotify-jabber-notify)
+;; (defvar libnotify-program "/usr/bin/notify-send")
+;; (defun notify-send (title message)
+;;   (start-process "notify" " notify"
+;; 		 libnotify-program "--expire-time=4000" title message))
+;; (defun libnotify-jabber-notify (from buf text proposed-alert)
+;;   "(jabber.el hook) Notify of new Jabber chat messages via libnotify"
+;;   (when (or jabber-message-alert-same-buffer
+;; 	    (not (memq (selected-window) (get-buffer-window-list buf))))
+;;     (if (jabber-muc-sender-p from)
+;; 	(notify-send (format "(PM) %s"
+;; 			     (jabber-jid-displayname (jabber-jid-user from)))
+;; 		     (format "%s: %s" (jabber-jid-resource from) text)))
+;;     (notify-send (format "%s" (jabber-jid-displayname from))
+;; 		 text)))
+;; (add-hook 'jabber-alert-message-hooks 'libnotify-jabber-notify)
 ;;-------------------------------------------------------------------------------
 ;; modes
 ;;-------------------------------------------------------------------------------
 ;; haskell mode
-;; (require 'company)
-;; (add-hook 'haskell-mode-hook 'company-mode)
-;(dolist (module '(turn-on-haskell-decl-scan turn-on-haskell-doc turn-on-haskell-indentation))
-;  (add-hook 'haskell-mode-hook module))
 (dolist (x '(("\\.lucius\\'" . css-mode)
 	     ("\\.julius\\'" . javascript-mode)
 	     ("\\.hamlet\\'" . html-mode)))
   (add-to-list 'auto-mode-alist x))
-					; ghc-mod
-;; (autoload 'ghc-init "ghc" nil t)
-;; (autoload 'ghc-debug "ghc" nil t)
-;; (add-hook 'haskell-mode-hook
-;; 	  (lambda () (progn (ghc-init)
-;; 			    (add-to-list 'ac-sources 'ac-source-ghc-mod)
-;; 			    (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region-or-line)
-;; 			    (local-set-key (kbd "C-c M-c") 'ghc-check-syntax)
-;; 			    (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-;; 			    )))
-;; (defvar cabal-use-sandbox nil)
-;; (defun cabal-toggle-sandboxing ()
-;; (interactive)
-;; (setq cabal-use-sandbox (not cabal-use-sandbox))
-;; (if cabal-use-sandbox
-;; (setq haskell-program-name "cabal repl")
-;; (setq haskell-program-name "ghci"))
-;; (message (format "haskell-program-name is %s"
-;; (if cabal-use-sandbox
-;; "cabal repl"
-;; "ghci"))))
 
 ;; c mode
 (setq c-default-style "linux"
@@ -251,10 +237,10 @@
   (add-hook mode 'pretty-greek))
 (define-key lisp-mode-shared-map (kbd "C-c l") "lambda")
 ;; perl mode
-(require 'cperl-mode)
-(defalias 'perl-mode 'cperl-mode)
-(setq cperl-hairy t)
-(cperl-set-style "C++")
+;; (require 'cperl-mode)
+;; (defalias 'perl-mode 'cperl-mode)
+;; (setq cperl-hairy t)
+;; (cperl-set-style "C++")
 ;; load custom
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -270,21 +256,6 @@
    (quote
     ("4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default)))
  '(fci-rule-color "#073642")
- '(global-undo-tree-mode t)
- '(haskell-decl-scan-bindings-as-variables t)
- '(haskell-doc-show-global-types t)
- '(haskell-doc-use-inf-haskell t)
- '(haskell-font-lock-haddock t)
- '(haskell-font-lock-symbols t)
- '(haskell-mode-hook
-   (quote
-    (capitalized-words-mode imenu-add-menubar-index turn-on-eldoc-mode turn-on-haskell-decl-scan turn-on-haskell-doc turn-on-haskell-indent turn-on-haskell-indentation turn-on-haskell-simple-indent)))
- '(haskell-program-name "ghci -Wall")
- '(haskell-stylish-on-save nil)
- '(safe-local-variable-values
-   (quote
-    ((haskell-process-use-ghci . t)
-     (haskell-indent-spaces . 4))))
  '(undo-tree-auto-save-history nil)
  '(vc-annotate-background nil)
  '(vc-annotate-color-map
@@ -317,4 +288,4 @@
  )
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(require 'css-sort)
+;(require 'css-sort)
